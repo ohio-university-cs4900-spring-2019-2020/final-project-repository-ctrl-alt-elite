@@ -1,0 +1,1 @@
+C:\stm.git\trunk\engine\win\lib64>for %f in (.\*.lib) do @echo %f & dumpbin /DIRECTIVES %f | grep LIBCMD
