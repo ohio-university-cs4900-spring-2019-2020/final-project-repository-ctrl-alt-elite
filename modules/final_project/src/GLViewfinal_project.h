@@ -3,6 +3,9 @@
 #include "GLView.h"
 #include "box.h"
 #include "target.h"
+#include <WOGUILabel.h>
+#include <WOFTGLString.h>
+#include <MGLFTGLString.h>
 
 namespace Aftr
 {
@@ -37,6 +40,9 @@ public:
 
    Box* box1;
    Target* target1;
+   //WOGUILabel* testText;
+   int total_hit;
+   //WOGUILabel* testText = WOGUILabel::New(nullptr);
 
 protected:
    GLViewfinal_project( const std::vector< std::string >& args );

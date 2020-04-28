@@ -31,6 +31,9 @@
 #include "WONVPhysX.h"
 #include "WONVDynSphere.h"
 #include "AftrGLRendererBase.h"
+#include <WOGUILabel.h>
+#include <WOFTGLString.h>
+#include <MGLFTGLString.h>
 
 #include "box.h"
 #include "target.h"
@@ -39,6 +42,10 @@
 #include "final_projectWayPoints.h"
 
 using namespace Aftr;
+
+std::string overwatch(ManagerEnvironmentConfiguration::getLMM() + "/fonts/overwatch.ttf");
+//WOGUILabel* testText;
+WOFTGLString* testText;
 
 GLViewfinal_project* GLViewfinal_project::New( const std::vector< std::string >& args )
 {
@@ -64,6 +71,8 @@ GLViewfinal_project::GLViewfinal_project( const std::vector< std::string >& args
    //    calls GLView::onCreate()
 
    //GLViewfinal_project::onCreate() is invoked after this module's LoadMap() is completed.
+
+    //WOGUILabel* testText = WOGUILabel::New(nullptr);
 }
 
 
@@ -81,6 +90,16 @@ void GLViewfinal_project::onCreate()
    }
    this->setActorChaseType( STANDARDEZNAV ); //Default is STANDARDEZNAV mode
    //this->setNumPhysicsStepsPerRender( 0 ); //pause physics engine on start up; will remain paused till set to 1
+   //testText = WOGUILabel::New(nullptr);
+   total_hit = 0;
+
+   testText = WOFTGLString::New(overwatch, 30);
+   testText->setText("Total targets hit: " + std::to_string(total_hit) +"\t");
+   testText->getModelT<MGLFTGLString>()->setFontColor(aftrColor4f(1.0f, 0.0f, 0.0f, 1.0f));
+   testText->getModelT<MGLFTGLString>()->setSize(30, 10);
+   testText->setPosition(Vector(8, 8, 8));
+   testText->rotateAboutGlobalX(Aftr::PI / 2);
+   worldLst->push_back(testText);
 }
 
 
@@ -95,6 +114,32 @@ void GLViewfinal_project::updateWorld()
    GLView::updateWorld(); //Just call the parent's update world first.
                           //If you want to add additional functionality, do it after
                           //this call.
+
+   //std::cout << cam->getLookDirection() << std::endl;
+   //worldLst->eraseViaWOptr(testText);
+   //WOGUILabel* testText = WOGUILabel::New(nullptr);
+
+   //testText = New(nullptr);
+   //std::string text = "Total targets hit: " + std::to_string(rand() % 10 + 1);
+   //testText = WOGUILabel::New(testText);
+
+   //worldLst->eraseViaWOptr(testText);
+   //updateWorld();
+
+
+   //WOGUILabel* testText = WOGUILabel::New(nullptr);
+   //std::string text = 
+   //testText = WOFTGLString::New(overwatch, 30);
+   ////std::string text = "Total targets hit: " + std::to_string(total_hit);
+   //testText->setText("Total targets hit: " + std::to_string(total_hit));
+   ////std::cout << text << std::endl;
+   ////testText->setText(text);
+   //testText->setColor(255, 0, 0, 255);
+   //testText->setFontSize(30);
+   //testText->setPosition(Vector(0, 1, 0));
+   //testText->setFontPath(overwatch);
+   //testText->setFontOrientation(FONT_ORIENTATION::foLEFT_TOP);
+   //worldLst->push_back(testText);
 }
 
 
@@ -128,27 +173,32 @@ void GLViewfinal_project::onKeyDown( const SDL_KeyboardEvent& key )
    if( key.keysym.sym == SDLK_0 )
       this->setNumPhysicsStepsPerRender( 1 );
 
-   if( key.keysym.sym == SDLK_1 )
+   if( key.keysym.sym == SDLK_RETURN )
    {
-
+       std::cout << "Enter pressed" << std::endl;
    }
 
-   if (key.keysym.sym == SDLK_w)
+   if (key.keysym.sym == SDLK_1)
    {
-       this->cam->moveInLookDirection(2);
+       //this->cam->moveInLookDirection(2);
+       total_hit++;
+       testText->setText("Total targets hit: " + std::to_string(total_hit));
+       worldLst->push_back(testText);
+       //updateWorld();
+       //total_hit++;
    }
-   if (key.keysym.sym == SDLK_s)
-   {
-       this->cam->moveOppositeLookDirection(2);
-   }
-   if (key.keysym.sym == SDLK_a)
-   {
-       this->cam->moveLeft();
-   }
-   if (key.keysym.sym == SDLK_d)
-   {
-       this->cam->moveRight();
-   }
+   //if (key.keysym.sym == SDLK_s)
+   //{
+   //    //this->cam->moveOppositeLookDirection(2);
+   //}
+   //if (key.keysym.sym == SDLK_a)
+   //{
+   //    //this->cam->moveLeft();
+   //}
+   //if (key.keysym.sym == SDLK_d)
+   //{
+   //    //this->cam->moveRight();
+   //}
 
    //switch (key.keysym.sym)
    //{
@@ -190,7 +240,8 @@ void Aftr::GLViewfinal_project::loadMap()
    std::string human( ManagerEnvironmentConfiguration::getSMM() + "/models/human_chest.wrl" );
    //std::string box(ManagerEnvironmentConfiguration::getLMM() + "/models/WOOD_PLANTER_BOXES_10K.dae");
    //std::string target1(ManagerEnvironmentConfiguration::getLMM() + "/models/shtfrtr.dae");
-   
+   //std::string overwatch(ManagerEnvironmentConfiguration::getLMM() + "/fonts/overwatch.ttf");
+
    //SkyBox Textures readily available
    std::vector< std::string > skyBoxImageNames; //vector to store texture paths
    skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/sky_mountains+6.jpg" );
@@ -231,6 +282,31 @@ void Aftr::GLViewfinal_project::loadMap()
    //wo->setPosition(Vector(25, 25, 0.2));
    //wo->setLabel("Box1");
    //worldLst->push_back(wo);
+
+   //Testing text
+   //WOGUILabel* testText = WOGUILabel::New(nullptr);
+   //WOGUILabel* testText;
+   //testText->New(nullptr);
+   //std::string text = "Total targets hit: " + std::to_string(rand() % 10 + 1);
+   //std::cout << text << std::endl;
+   //testText->setText(text);
+   //testText->setColor(255, 0, 0, 255);
+   //testText->setFontSize(30);
+   //testText->setPosition(Vector(0, 1, 0));
+   //testText->setFontPath(overwatch);
+   //testText->setFontOrientation(FONT_ORIENTATION::foLEFT_TOP);
+   //worldLst->push_back(testText);
+
+   //WOGUILabel* testText = WOGUILabel::New(nullptr);
+   //std::string text = "Total targets hit: " /*+ std::to_string(total_hit)*/;
+   //std::cout << text << std::endl;
+   //testText->setText(text);
+   //testText->setColor(255, 0, 0, 255);
+   //testText->setFontSize(30);
+   //testText->setPosition(Vector(0, 1, 0));
+   //testText->setFontPath(overwatch);
+   //testText->setFontOrientation(FONT_ORIENTATION::foLEFT_TOP);
+   //worldLst->push_back(testText);
    
    this->box1 = Box::New();
    worldLst->push_back(this->box1->get_world_object());

@@ -3,7 +3,22 @@ lib64/
 include/
 
 CMakeFiles/
+#modules/final_project/cwin64/final_project.dir/
 final_project.dir/
 x64/
 .vs/
-modules/final_project/cwin64/Debug/AftrBurnerEngine_debug.lib
+#modules/final_project/cwin64/Debug/AftrBurnerEngine_debug.lib
+AftrBurnerEngine_debug.lib
+modules/NewModule.zip
+modules/renameModule.py
+Debug\
+
+modules/final_project/cwin64/Debug/final_project.exe
+modules/final_project/cwin64/Debug/final_project.exp
+modules/final_project/cwin64/Debug/final_project.ilk
+modules/final_project/cwin64/Debug/final_project.pdb
+
+modules/final_project/cwin64/Debug/final_project.exe
+modules/final_project/cwin64/Debug/final_project.exp
+modules/final_project/cwin64/Debug/final_project.ilk
+modules/final_project/cwin64/Debug/final_project.pdb
