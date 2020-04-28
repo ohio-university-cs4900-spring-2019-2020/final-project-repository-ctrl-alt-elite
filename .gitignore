@@ -3,7 +3,7 @@ lib64/
 include/
 
 CMakeFiles/
-final_project.dir/
+modules/final_project/cwin64/final_project.dir/
 x64/
 .vs/
 modules/final_project/cwin64/Debug/AftrBurnerEngine_debug.lib
