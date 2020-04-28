@@ -31,6 +31,9 @@
 #include "WONVPhysX.h"
 #include "WONVDynSphere.h"
 #include "AftrGLRendererBase.h"
+#include <WOGUILabel.h>
+#include <WOFTGLString.h>
+#include <MGLFTGLString.h>
 
 #include "box.h"
 #include "target.h"
@@ -40,6 +43,7 @@
 
 using namespace Aftr;
 
+//test changehlikkhlkdsfdadfaadfa
 GLViewfinal_project* GLViewfinal_project::New( const std::vector< std::string >& args )
 {
    GLViewfinal_project* glv = new GLViewfinal_project( args );
@@ -64,6 +68,8 @@ GLViewfinal_project::GLViewfinal_project( const std::vector< std::string >& args
    //    calls GLView::onCreate()
 
    //GLViewfinal_project::onCreate() is invoked after this module's LoadMap() is completed.
+
+    //WOGUILabel* testText = WOGUILabel::New(nullptr);
 }
 
 
@@ -95,6 +101,13 @@ void GLViewfinal_project::updateWorld()
    GLView::updateWorld(); //Just call the parent's update world first.
                           //If you want to add additional functionality, do it after
                           //this call.
+
+   //std::cout << cam->getLookDirection() << std::endl;
+
+   WOGUILabel* testText = WOGUILabel::New(nullptr);
+   std::string text = "Total targets hit: " + rand() % 10 + 1;
+   testText->setText(text);
+   worldLst->push_back(testText);
 }
 
 
@@ -128,9 +141,9 @@ void GLViewfinal_project::onKeyDown( const SDL_KeyboardEvent& key )
    if( key.keysym.sym == SDLK_0 )
       this->setNumPhysicsStepsPerRender( 1 );
 
-   if( key.keysym.sym == SDLK_1 )
+   if( key.keysym.sym == SDLK_RETURN )
    {
-
+       std::cout << "Enter pressed" << std::endl;
    }
 
    if (key.keysym.sym == SDLK_w)
@@ -190,7 +203,8 @@ void Aftr::GLViewfinal_project::loadMap()
    std::string human( ManagerEnvironmentConfiguration::getSMM() + "/models/human_chest.wrl" );
    //std::string box(ManagerEnvironmentConfiguration::getLMM() + "/models/WOOD_PLANTER_BOXES_10K.dae");
    //std::string target1(ManagerEnvironmentConfiguration::getLMM() + "/models/shtfrtr.dae");
-   
+   std::string overwatch(ManagerEnvironmentConfiguration::getLMM() + "/fonts/overwatch.ttf");
+
    //SkyBox Textures readily available
    std::vector< std::string > skyBoxImageNames; //vector to store texture paths
    skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/sky_mountains+6.jpg" );
@@ -231,6 +245,19 @@ void Aftr::GLViewfinal_project::loadMap()
    //wo->setPosition(Vector(25, 25, 0.2));
    //wo->setLabel("Box1");
    //worldLst->push_back(wo);
+
+   //Testing text
+   //WOGUILabel* testText = WOGUILabel::New(nullptr);
+   //WOGUILabel* testText;
+   testText->New(nullptr);
+   std::string text = "Total targets hit: " + rand() % 10 + 1;
+   testText->setText(text);
+   testText->setColor(255, 0, 0, 255);
+   testText->setFontSize(30);
+   testText->setPosition(Vector(0, 1, 0));
+   testText->setFontPath(overwatch);
+   testText->setFontOrientation(FONT_ORIENTATION::foLEFT_TOP);
+   worldLst->push_back(testText);
    
    this->box1 = Box::New();
    worldLst->push_back(this->box1->get_world_object());
