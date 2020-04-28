@@ -11,6 +11,14 @@ x64/
 AftrBurnerEngine_debug.lib
 modules/NewModule.zip
 modules/renameModule.py
-modules/final_project/cwin64/Debug/
-modules\final_project\cwin64\Debug\
-Debug/
+Debug\
+
+modules/final_project/cwin64/Debug/final_project.exe
+modules/final_project/cwin64/Debug/final_project.exp
+modules/final_project/cwin64/Debug/final_project.ilk
+modules/final_project/cwin64/Debug/final_project.pdb
+
+modules/final_project/cwin64/Debug/final_project.exe
+modules/final_project/cwin64/Debug/final_project.exp
+modules/final_project/cwin64/Debug/final_project.ilk
+modules/final_project/cwin64/Debug/final_project.pdb

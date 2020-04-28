@@ -40,7 +40,8 @@ public:
 
    Box* box1;
    Target* target1;
-   WOGUILabel* testText;
+   //WOGUILabel* testText;
+   int total_hit;
    //WOGUILabel* testText = WOGUILabel::New(nullptr);
 
 protected:
