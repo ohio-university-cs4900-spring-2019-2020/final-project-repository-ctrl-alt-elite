@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/kartr/Desktop/renderer/modules/final_project/src
+# Install script for directory: D:/final-project-repository-ctrl-alt-elite/modules/final_project/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Users/kartr/Desktop/renderer")
+  set(CMAKE_INSTALL_PREFIX "D:/final-project-repository-ctrl-alt-elite")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/kartr/Desktop/renderer/modules/final_project/cwin64/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "D:/final-project-repository-ctrl-alt-elite/modules/final_project/cwin64/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
