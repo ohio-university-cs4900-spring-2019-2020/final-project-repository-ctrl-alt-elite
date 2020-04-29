@@ -172,7 +172,7 @@ void GLViewfinal_project::onKeyDown( const SDL_KeyboardEvent& key )
    {
        this->bullet = Bullet::New();
        worldLst->push_back(this->bullet->get_world_object());
-       this->bullet->set_position(cam->getLookDirection());
+       this->bullet->set_position(cam->getPosition());
        std::cout << "Bullet fired" << std::endl;
        //fire_bullet();
    }
