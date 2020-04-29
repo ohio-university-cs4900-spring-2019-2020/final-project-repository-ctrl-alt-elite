@@ -4,6 +4,7 @@
 #include "box.h"
 #include "target.h"
 #include "gun.h"
+#include "bullet.h"
 #include <WOGUILabel.h>
 #include <WOFTGLString.h>
 #include <MGLFTGLString.h>
@@ -38,6 +39,7 @@ public:
    virtual void onMouseMove( const SDL_MouseMotionEvent& e );
    virtual void onKeyDown( const SDL_KeyboardEvent& key );
    virtual void onKeyUp( const SDL_KeyboardEvent& key );
+   virtual void fire_bullet();
 
    Box* box1;
    Box* box2;
@@ -48,6 +50,7 @@ public:
    Target* target3;
    Target* target4;
    Gun* gun;
+   Bullet* bullet;
 
    //WOWayPointSpherical* wayPt;
    //WOGUILabel* testText;

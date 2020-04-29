@@ -10,24 +10,20 @@ namespace Aftr
 	class Bullet
 	{
 	public:
-		static Bullet* New(Vector position = Vector(25, 25, 0.2), const std::string file = ManagerEnvironmentConfiguration::getLMM() + "/models/shareablebullet.dae");
+		static Bullet* New(Vector position = Vector(25, 25, 0.2), const std::string file = ManagerEnvironmentConfiguration::getLMM() + "/models/bullet.obj");
 
 		void set_position(float x, float y, float z)
 		{
 			bullet->setPosition(Vector(x, y, z) += compensation);
-			//bullet->rotateAboutRelX(45);
-			//bullet->rotateAboutRelY(45);
-			//bullet->rotateAboutGlobalZ(-45);
 		}
 
 		void set_position(Vector v)
 		{
 			//v += Vector(0, 0, 0.3);
 			bullet->setPosition(v += compensation);
-			//bullet->rotateAboutRelZ(45);
-			//bullet->rotateAboutRelY(45);
-			//bullet->rotateAboutGlobalZ(-45);
 		}
+
+		//void FireBullet();
 
 		Vector get_postion()
 		{
@@ -44,7 +40,7 @@ namespace Aftr
 
 		Vector compensation = (0, 0, 0.28);
 
-		Bullet(Vector position = (0, 0, 0.28), const std::string file = ManagerEnvironmentConfiguration::getLMM() + "/models/shareablebullet.dae");
+		Bullet(Vector position = (0, 0, 0.28), const std::string file = ManagerEnvironmentConfiguration::getLMM() + "/models/bullet.obj");
 	};
 }
 

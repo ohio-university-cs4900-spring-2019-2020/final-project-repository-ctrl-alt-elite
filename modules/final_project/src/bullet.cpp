@@ -1,4 +1,5 @@
 #include "bullet.h"
+#include "CustomBalistics.cpp"
 
 #ifdef AFTR_CONFIG_USE_BOOST
 

@@ -38,6 +38,7 @@
 #include "box.h"
 #include "target.h"
 #include "gun.h"
+#include "bullet.h"
 
 //If we want to use way points, we need to include this.
 #include "final_projectWayPoints.h"
@@ -169,7 +170,11 @@ void GLViewfinal_project::onKeyDown( const SDL_KeyboardEvent& key )
 
    if( key.keysym.sym == SDLK_RETURN )
    {
-       std::cout << "Enter pressed" << std::endl;
+       this->bullet = Bullet::New();
+       worldLst->push_back(this->bullet->get_world_object());
+       this->bullet->set_position(cam->getLookDirection());
+       std::cout << "Bullet fired" << std::endl;
+       //fire_bullet();
    }
 
    if (key.keysym.sym == SDLK_1)
@@ -322,4 +327,12 @@ void GLViewfinal_project::createfinal_projectWayPoints()
    WOWayPointSpherical* wayPt = WOWP1::New( params, 3 );
    wayPt->setPosition( Vector( 35, 55, 3 ) );
    worldLst->push_back( wayPt );
+}
+
+void GLViewfinal_project::fire_bullet()
+{
+    this->bullet = Bullet::New();
+    worldLst->push_back(this->bullet->get_world_object());
+    this->bullet->set_position(cam->getLookDirection());
+    std::cout << "Bullet fired" << std::endl;
 }
