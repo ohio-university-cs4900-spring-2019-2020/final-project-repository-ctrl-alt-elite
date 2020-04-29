@@ -47,6 +47,7 @@ using namespace Aftr;
 std::string overwatch(ManagerEnvironmentConfiguration::getLMM() + "/fonts/overwatch.ttf");
 //WOGUILabel* testText;
 WOFTGLString* testText;
+WOWayPointSpherical* wayPt;
 
 GLViewfinal_project* GLViewfinal_project::New( const std::vector< std::string >& args )
 {
@@ -95,7 +96,7 @@ void GLViewfinal_project::onCreate()
    total_hit = 0;
 
    testText = WOFTGLString::New(overwatch, 90);
-   testText->setText("Total targets hit: " + std::to_string(total_hit));
+   testText->setText("Total targets hit: " + std::to_string(wayPt->isTriggered()));
    testText->getModelT<MGLFTGLString>()->setFontColor(aftrColor4f(1.0f, 0.0f, 0.0f, 1.0f));
    testText->getModelT<MGLFTGLString>()->setSize(30, 10);
    testText->setPosition(Vector(50, 50, 25));
@@ -130,6 +131,9 @@ void GLViewfinal_project::updateWorld()
    //std::cout << "Cam position" << cam->getPosition() << std::endl;
    //this->gun->set_direction(cam->getLookDirection());
    //std::cout << "Gun position: " << this->gun->get_postion() << std::endl;
+
+   testText->setText("Total targets hit: " + std::to_string(wayPt->isTriggered()));
+   worldLst->push_back(testText);
 }
 
 
@@ -172,7 +176,7 @@ void GLViewfinal_project::onKeyDown( const SDL_KeyboardEvent& key )
    {
        //this->cam->moveInLookDirection(2);
        total_hit++;
-       testText->setText("Total targets hit: " + std::to_string(total_hit));
+       testText->setText("Total targets hit: " + std::to_string(wayPt->isTriggered()));
        worldLst->push_back(testText);
        //updateWorld();
        //total_hit++;
@@ -293,7 +297,18 @@ void Aftr::GLViewfinal_project::loadMap()
    //worldLst->push_back(this->gun->get_world_object());
    //this->gun->set_position(cam->getPosition());
 
-   createfinal_projectWayPoints();
+   // Create a waypoint with a radius of 3, a frequency of 5 seconds, activated by GLView's camera, and is visible.
+   WayPointParametersBase params(this);
+   params.frequency = 1000;
+   params.useCamera = true;
+   params.visible = true;
+   //WOWayPointSpherical* wayPt = WOWP1::New(params, 3);
+   wayPt = WOWP1::New(params, 3);
+   wayPt->setPosition(Vector(35, 55, 3));
+   worldLst->push_back(wayPt);
+   //wayPt->isTriggered();
+
+   //createfinal_projectWayPoints();
 }
 
 
@@ -301,10 +316,10 @@ void GLViewfinal_project::createfinal_projectWayPoints()
 {
    // Create a waypoint with a radius of 3, a frequency of 5 seconds, activated by GLView's camera, and is visible.
    WayPointParametersBase params(this);
-   params.frequency = 5000;
+   params.frequency = 100;
    params.useCamera = true;
    params.visible = true;
    WOWayPointSpherical* wayPt = WOWP1::New( params, 3 );
-   wayPt->setPosition( Vector( 50, 0, 3 ) );
+   wayPt->setPosition( Vector( 35, 55, 3 ) );
    worldLst->push_back( wayPt );
 }

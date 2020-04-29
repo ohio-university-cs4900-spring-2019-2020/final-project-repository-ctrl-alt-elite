@@ -48,6 +48,8 @@ public:
    Target* target3;
    Target* target4;
    Gun* gun;
+
+   //WOWayPointSpherical* wayPt;
    //WOGUILabel* testText;
    int total_hit;
    //WOGUILabel* testText = WOGUILabel::New(nullptr);
