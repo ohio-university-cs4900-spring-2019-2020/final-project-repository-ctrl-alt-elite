@@ -3,6 +3,7 @@
 #include "GLView.h"
 #include "box.h"
 #include "target.h"
+#include "gun.h"
 #include <WOGUILabel.h>
 #include <WOFTGLString.h>
 #include <MGLFTGLString.h>
@@ -39,7 +40,14 @@ public:
    virtual void onKeyUp( const SDL_KeyboardEvent& key );
 
    Box* box1;
+   Box* box2;
+   Box* box3;
+   Box* box4;
    Target* target1;
+   Target* target2;
+   Target* target3;
+   Target* target4;
+   Gun* gun;
    //WOGUILabel* testText;
    int total_hit;
    //WOGUILabel* testText = WOGUILabel::New(nullptr);
