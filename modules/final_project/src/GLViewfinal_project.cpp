@@ -37,6 +37,8 @@
 
 #include "box.h"
 #include "target.h"
+#include "gun.h"
+#include "bullet.h"
 
 //If we want to use way points, we need to include this.
 #include "final_projectWayPoints.h"
@@ -46,6 +48,7 @@ using namespace Aftr;
 std::string overwatch(ManagerEnvironmentConfiguration::getLMM() + "/fonts/overwatch.ttf");
 //WOGUILabel* testText;
 WOFTGLString* testText;
+WOWayPointSpherical* wayPt;
 
 GLViewfinal_project* GLViewfinal_project::New( const std::vector< std::string >& args )
 {
@@ -93,13 +96,22 @@ void GLViewfinal_project::onCreate()
    //testText = WOGUILabel::New(nullptr);
    total_hit = 0;
 
-   testText = WOFTGLString::New(overwatch, 30);
-   testText->setText("Total targets hit: " + std::to_string(total_hit) +"\t");
+   testText = WOFTGLString::New(overwatch, 90);
+   testText->setText("Total targets hit: " + std::to_string(wayPt->isTriggered()));
    testText->getModelT<MGLFTGLString>()->setFontColor(aftrColor4f(1.0f, 0.0f, 0.0f, 1.0f));
    testText->getModelT<MGLFTGLString>()->setSize(30, 10);
-   testText->setPosition(Vector(8, 8, 8));
+   testText->setPosition(Vector(50, 50, 25));
+   testText->rotateAboutGlobalX(45);
+   testText->rotateAboutGlobalY(-45);
+   //testText->setPosition(FONT_ORIENTATION::foLEFT_TOP);
+   //testText->getModelT<MGLFTGLString>()->setF
    testText->rotateAboutGlobalX(Aftr::PI / 2);
    worldLst->push_back(testText);
+
+   //this->gun = Gun::New();
+   //worldLst->push_back(this->gun->get_world_object());
+   //this->gun->set_position(cam->getPosition());
+   //std::cout << "Look direction" << cam->getLookDirection() << std::endl;
 }
 
 
@@ -114,32 +126,15 @@ void GLViewfinal_project::updateWorld()
    GLView::updateWorld(); //Just call the parent's update world first.
                           //If you want to add additional functionality, do it after
                           //this call.
+   //this->gun->set_position(cam->getPosition());
+   //std::cout << "Look direction" << cam->getLookDirection() << std::endl;
+   ////Vector temp = cam->getLookDirection();
+   //std::cout << "Cam position" << cam->getPosition() << std::endl;
+   //this->gun->set_direction(cam->getLookDirection());
+   //std::cout << "Gun position: " << this->gun->get_postion() << std::endl;
 
-   //std::cout << cam->getLookDirection() << std::endl;
-   //worldLst->eraseViaWOptr(testText);
-   //WOGUILabel* testText = WOGUILabel::New(nullptr);
-
-   //testText = New(nullptr);
-   //std::string text = "Total targets hit: " + std::to_string(rand() % 10 + 1);
-   //testText = WOGUILabel::New(testText);
-
-   //worldLst->eraseViaWOptr(testText);
-   //updateWorld();
-
-
-   //WOGUILabel* testText = WOGUILabel::New(nullptr);
-   //std::string text = 
-   //testText = WOFTGLString::New(overwatch, 30);
-   ////std::string text = "Total targets hit: " + std::to_string(total_hit);
-   //testText->setText("Total targets hit: " + std::to_string(total_hit));
-   ////std::cout << text << std::endl;
-   ////testText->setText(text);
-   //testText->setColor(255, 0, 0, 255);
-   //testText->setFontSize(30);
-   //testText->setPosition(Vector(0, 1, 0));
-   //testText->setFontPath(overwatch);
-   //testText->setFontOrientation(FONT_ORIENTATION::foLEFT_TOP);
-   //worldLst->push_back(testText);
+   testText->setText("Total targets hit: " + std::to_string(wayPt->isTriggered()));
+   worldLst->push_back(testText);
 }
 
 
@@ -175,14 +170,18 @@ void GLViewfinal_project::onKeyDown( const SDL_KeyboardEvent& key )
 
    if( key.keysym.sym == SDLK_RETURN )
    {
-       std::cout << "Enter pressed" << std::endl;
+       this->bullet = Bullet::New();
+       worldLst->push_back(this->bullet->get_world_object());
+       this->bullet->set_position(cam->getPosition());
+       std::cout << "Bullet fired" << std::endl;
+       //fire_bullet();
    }
 
    if (key.keysym.sym == SDLK_1)
    {
        //this->cam->moveInLookDirection(2);
        total_hit++;
-       testText->setText("Total targets hit: " + std::to_string(total_hit));
+       testText->setText("Total targets hit: " + std::to_string(wayPt->isTriggered()));
        worldLst->push_back(testText);
        //updateWorld();
        //total_hit++;
@@ -198,18 +197,6 @@ void GLViewfinal_project::onKeyDown( const SDL_KeyboardEvent& key )
    //if (key.keysym.sym == SDLK_d)
    //{
    //    //this->cam->moveRight();
-   //}
-
-   //switch (key.keysym.sym)
-   //{
-   //case SDLK_a:
-   //    this->cam->moveLeft();
-   //case SDLK_s:
-   //    this->cam->moveOppositeLookDirection();
-   //case SDLK_d:
-   //    this->cam->moveRight();
-   //case SDLK_w:
-   //    this->cam->moveInLookDirection();
    //}
 }
 
@@ -276,48 +263,57 @@ void Aftr::GLViewfinal_project::loadMap()
    grassSkin.setSpecularCoefficient( 10 ); // How "sharp" are the specular highlights (bigger is sharper, 1000 is very sharp, 10 is very dull)
    wo->setLabel( "Grass" );
    worldLst->push_back( wo );
-
-    //Placing models in world
-   //wo = WO::New(box, Vector(1, 1, 1));
-   //wo->setPosition(Vector(25, 25, 0.2));
-   //wo->setLabel("Box1");
-   //worldLst->push_back(wo);
-
-   //Testing text
-   //WOGUILabel* testText = WOGUILabel::New(nullptr);
-   //WOGUILabel* testText;
-   //testText->New(nullptr);
-   //std::string text = "Total targets hit: " + std::to_string(rand() % 10 + 1);
-   //std::cout << text << std::endl;
-   //testText->setText(text);
-   //testText->setColor(255, 0, 0, 255);
-   //testText->setFontSize(30);
-   //testText->setPosition(Vector(0, 1, 0));
-   //testText->setFontPath(overwatch);
-   //testText->setFontOrientation(FONT_ORIENTATION::foLEFT_TOP);
-   //worldLst->push_back(testText);
-
-   //WOGUILabel* testText = WOGUILabel::New(nullptr);
-   //std::string text = "Total targets hit: " /*+ std::to_string(total_hit)*/;
-   //std::cout << text << std::endl;
-   //testText->setText(text);
-   //testText->setColor(255, 0, 0, 255);
-   //testText->setFontSize(30);
-   //testText->setPosition(Vector(0, 1, 0));
-   //testText->setFontPath(overwatch);
-   //testText->setFontOrientation(FONT_ORIENTATION::foLEFT_TOP);
-   //worldLst->push_back(testText);
    
    this->box1 = Box::New();
    worldLst->push_back(this->box1->get_world_object());
-   this->box1->set_position(Vector(25, 25, 0));
+   this->box1->set_position(Vector(47, 40, 0));
+
+   this->box2 = Box::New();
+   worldLst->push_back(this->box2->get_world_object());
+   this->box2->set_position(Vector(43, 43, 0));
+
+   this->box3 = Box::New();
+   worldLst->push_back(this->box3->get_world_object());
+   this->box3->set_position(Vector(38, 45, 0));
+
+   this->box4 = Box::New();
+   worldLst->push_back(this->box4->get_world_object());
+   this->box4->set_position(Vector(33, 50, 0));
+
    
    //Need to fix target scaling
    this->target1 = Target::New();
    worldLst->push_back(this->target1->get_world_object());
-   this->target1->set_position(Vector(30, 30, 0));
+   this->target1->set_position(Vector(35, 55, 0));
 
-   createfinal_projectWayPoints();
+   this->target2 = Target::New();
+   worldLst->push_back(this->target2->get_world_object());
+   this->target2->set_position(Vector(43, 50, 0));
+
+   this->target3 = Target::New();
+   worldLst->push_back(this->target3->get_world_object());
+   this->target3->set_position(Vector(45, 45, 0));
+
+   this->target4 = Target::New();
+   worldLst->push_back(this->target4->get_world_object());
+   this->target4->set_position(Vector(50, 40, 0));
+
+   //this->gun = Gun::New();
+   //worldLst->push_back(this->gun->get_world_object());
+   //this->gun->set_position(cam->getPosition());
+
+   // Create a waypoint with a radius of 3, a frequency of 5 seconds, activated by GLView's camera, and is visible.
+   WayPointParametersBase params(this);
+   params.frequency = 1000;
+   params.useCamera = true;
+   params.visible = true;
+   //WOWayPointSpherical* wayPt = WOWP1::New(params, 3);
+   wayPt = WOWP1::New(params, 3);
+   wayPt->setPosition(Vector(35, 55, 3));
+   worldLst->push_back(wayPt);
+   //wayPt->isTriggered();
+
+   //createfinal_projectWayPoints();
 }
 
 
@@ -325,10 +321,18 @@ void GLViewfinal_project::createfinal_projectWayPoints()
 {
    // Create a waypoint with a radius of 3, a frequency of 5 seconds, activated by GLView's camera, and is visible.
    WayPointParametersBase params(this);
-   params.frequency = 5000;
+   params.frequency = 100;
    params.useCamera = true;
    params.visible = true;
    WOWayPointSpherical* wayPt = WOWP1::New( params, 3 );
-   wayPt->setPosition( Vector( 50, 0, 3 ) );
+   wayPt->setPosition( Vector( 35, 55, 3 ) );
    worldLst->push_back( wayPt );
+}
+
+void GLViewfinal_project::fire_bullet()
+{
+    this->bullet = Bullet::New();
+    worldLst->push_back(this->bullet->get_world_object());
+    this->bullet->set_position(cam->getLookDirection());
+    std::cout << "Bullet fired" << std::endl;
 }

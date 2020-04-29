@@ -15,12 +15,18 @@ namespace Aftr
 			void set_position(float x, float y, float z)
 			{
 				box->setPosition(Vector(x, y, z) += compensation);
+				//box->rotateAboutRelX(45);
+				//box->rotateAboutRelY(45);
+				box->rotateAboutGlobalZ(-45);
 			}
 
 			void set_position(Vector v)
 			{
 				//v += Vector(0, 0, 0.3);
 				box->setPosition(v += compensation);
+				//box->rotateAboutRelZ(45);
+				//box->rotateAboutRelY(45);
+				box->rotateAboutGlobalZ(-45);
 			}
 
 			Vector get_postion()
