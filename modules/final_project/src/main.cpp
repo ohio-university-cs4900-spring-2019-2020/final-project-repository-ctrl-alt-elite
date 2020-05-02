@@ -25,7 +25,7 @@ int main( int argc, char* argv[] )
 
    do
    {
-      std::unique_ptr< Aftr::GLViewNewModule > glView( Aftr::GLViewNewModule::New( args ) );
+      std::unique_ptr< Aftr::GLViewfinal_project > glView( Aftr::GLViewfinal_project::New( args ) );
       simStatus = glView->startWorldSimulationLoop(); // Runs until simulation exits or requests a restart (values 0 or -1, respectively)
    }
    while( simStatus != 0 );

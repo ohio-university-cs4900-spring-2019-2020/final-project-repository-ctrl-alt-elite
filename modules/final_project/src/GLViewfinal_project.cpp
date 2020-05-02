@@ -1,5 +1,4 @@
 #include "GLViewfinal_project.h"
-//#include "SoundManager.h"
 
 #include "WorldList.h" //This is where we place all of our WOs
 #include "ManagerOpenGLState.h" //We can change OpenGL State attributes with this
@@ -32,6 +31,9 @@
 #include "WONVPhysX.h"
 #include "WONVDynSphere.h"
 #include "AftrGLRendererBase.h"
+#include <WOGUILabel.h>
+#include <WOFTGLString.h>
+#include <MGLFTGLString.h>
 
 //If we want to use way points, we need to include this.
 #include "final_projectWayPoints.h"
@@ -39,20 +41,24 @@ using namespace Aftr;
 using namespace std;
 //using namespace irrklang;
 
-GLViewNewModule* GLViewNewModule::New( const std::vector< std::string >& args )
+WOFTGLString* testText;
+WOWayPointSpherical* wayPt;
+std::string overwatch(ManagerEnvironmentConfiguration::getLMM() + "/fonts/overwatch.ttf");
+
+GLViewfinal_project* GLViewfinal_project::New( const std::vector< std::string >& args )
 {
-   GLViewNewModule* glv = new GLViewNewModule( args );
+   GLViewfinal_project* glv = new GLViewfinal_project( args );
    glv->init( Aftr::GRAVITY, Vector( 0, 0, -1.0f ), "../aftr.conf", PHYSICS_ENGINE_TYPE::petODE );
    glv->onCreate();
    return glv;
 }
 
 
-GLViewNewModule::GLViewNewModule( const std::vector< std::string >& args ) : GLView( args )
+GLViewfinal_project::GLViewfinal_project( const std::vector< std::string >& args ) : GLView( args )
 {
    //Initialize any member variables that need to be used inside of LoadMap() here.
    //Note: At this point, the Managers are not yet initialized. The Engine initialization
-   //occurs immediately after this method returns (see GLViewNewModule::New() for
+   //occurs immediately after this method returns (see GLViewfinal_project::New() for
    //reference). Then the engine invoke's GLView::loadMap() for this module.
    //After loadMap() returns, GLView::onCreate is finally invoked.
 
@@ -62,13 +68,13 @@ GLViewNewModule::GLViewNewModule( const std::vector< std::string >& args ) : GLV
    //       calls GLView::loadMap() (as well as initializing the engine's Managers)
    //    calls GLView::onCreate()
 
-   //GLViewNewModule::onCreate() is invoked after this module's LoadMap() is completed.
+   //GLViewfinal_project::onCreate() is invoked after this module's LoadMap() is completed.
 }
 
 
-void GLViewNewModule::onCreate()
+void GLViewfinal_project::onCreate()
 {
-   //GLViewNewModule::onCreate() is invoked after this module's LoadMap() is completed.
+   //GLViewfinal_project::onCreate() is invoked after this module's LoadMap() is completed.
    //At this point, all the managers are initialized. That is, the engine is fully initialized.
 
    if( this->pe != NULL )
@@ -80,16 +86,27 @@ void GLViewNewModule::onCreate()
    }
    this->setActorChaseType( STANDARDEZNAV ); //Default is STANDARDEZNAV mode
    //this->setNumPhysicsStepsPerRender( 0 ); //pause physics engine on start up; will remain paused till set to 1
+
+   total_hit = 0;
+
+   testText = WOFTGLString::New(overwatch, 100);
+   testText->setText("Total targets hit: " + std::to_string(wayPt->isTriggered()));
+   testText->getModelT<MGLFTGLString>()->setFontColor(aftrColor4f(1.0f, 0.0f, 0.0f, 1.0f));
+   testText->getModelT<MGLFTGLString>()->setSize(30, 10);
+   testText->setPosition(Vector(100, 100, 25));
+   testText->rotateAboutGlobalX(45);
+   testText->rotateAboutGlobalY(-45);
+   testText->rotateAboutRelX(45);
+   testText->rotateAboutRelY(-45);
+   worldLst->push_back(testText);
 }
 
-
-GLViewNewModule::~GLViewNewModule()
+GLViewfinal_project::~GLViewfinal_project()
 {
    //Implicitly calls GLView::~GLView()
 }
 
-
-void GLViewNewModule::updateWorld()
+void GLViewfinal_project::updateWorld()
 {
    GLView::updateWorld(); //Just call the parent's update world first.
                           //If you want to add additional functionality, do it after
@@ -102,35 +119,33 @@ void GLViewNewModule::updateWorld()
    }
 
    // Here is where we would put the update on target hit stuff!
+
+   testText->setText("Total targets hit: " + std::to_string(wayPt->isTriggered() + total_hit));
+   worldLst->push_back(testText);
 }
 
-
-void GLViewNewModule::onResizeWindow( GLsizei width, GLsizei height )
+void GLViewfinal_project::onResizeWindow( GLsizei width, GLsizei height )
 {
    GLView::onResizeWindow( width, height ); //call parent's resize method.
 }
 
-
-void GLViewNewModule::onMouseDown( const SDL_MouseButtonEvent& e )
+void GLViewfinal_project::onMouseDown( const SDL_MouseButtonEvent& e )
 {
    GLView::onMouseDown( e );
    
 }
 
-
-void GLViewNewModule::onMouseUp( const SDL_MouseButtonEvent& e )
+void GLViewfinal_project::onMouseUp( const SDL_MouseButtonEvent& e )
 {
    GLView::onMouseUp( e );
 }
 
-
-void GLViewNewModule::onMouseMove( const SDL_MouseMotionEvent& e )
+void GLViewfinal_project::onMouseMove( const SDL_MouseMotionEvent& e )
 {
    GLView::onMouseMove( e );
 }
 
-
-void GLViewNewModule::onKeyDown( const SDL_KeyboardEvent& key )
+void GLViewfinal_project::onKeyDown( const SDL_KeyboardEvent& key )
 {
    GLView::onKeyDown( key );
    if( key.keysym.sym == SDLK_0 )
@@ -138,7 +153,7 @@ void GLViewNewModule::onKeyDown( const SDL_KeyboardEvent& key )
 
    if( key.keysym.sym == SDLK_1 )
    {
-	   
+       total_hit++;
    }
 
    if (key.keysym.sym == SDLK_a)
@@ -152,24 +167,14 @@ void GLViewNewModule::onKeyDown( const SDL_KeyboardEvent& key )
    {
 	   WeaponFiring(this->worldLst->getWOByID(this->PlayerWeaponWOIndex));
    }
-   //SoundManager* sManager = SoundManager::New(5);
-   
-   //sManager->PlaySound2D(ManagerEnvironmentConfiguration::getSMM() + "/sounds/sound2.wav");
-   //World Ambiance Sound manager:
-   //Generates new manager for the ambiant sounds
-   //SoundManager* AmbianceSoundManager = SoundManager::New(1);
-   //Runs the space sound for 10 seconds
-   //AmbianceSoundManager->LoopSound2DWithDurationInMilliSec(ManagerEnvironmentConfiguration::getSMM() + "/sounds/sound2.wav", 10000);
 }
 
-
-void GLViewNewModule::onKeyUp( const SDL_KeyboardEvent& key )
+void GLViewfinal_project::onKeyUp( const SDL_KeyboardEvent& key )
 {
    GLView::onKeyUp( key );
 }
 
-
-void Aftr::GLViewNewModule::loadMap()
+void Aftr::GLViewfinal_project::loadMap()
 {
    this->worldLst = new WorldList(); //WorldList is a 'smart' vector that is used to store WO*'s
    this->actorLst = new WorldList();
@@ -235,16 +240,25 @@ void Aftr::GLViewNewModule::loadMap()
 	   float newX = rand() % BattleGroundDimension;
 	   float newY = rand() % BattleGroundDimension;
 	   GenerateRandomTargetHuman(newX, newY);
+
+       std::cout << "Creating target waypoint" << std::endl;
+       WayPointParametersBase params(this);
+       params.frequency = 1000;
+       params.useCamera = true;
+       params.visible = true;
+       //WOWayPointSpherical* wayPt = WOWP1::New(params, 3);
+       wayPt = WOWP1::New(params, 3);
+       wayPt->setPosition(Vector(newX, newY, 10));
+       worldLst->push_back(wayPt);
    }
 }
 
-void Aftr::GLViewNewModule::MoveBullet(WO* Bullet)
+void Aftr::GLViewfinal_project::MoveBullet(WO* Bullet)
 {
 	Bullet->moveRelative(Bullet->getModel()->getLookDirection() * 3.5);
 }
 
-
-void Aftr::GLViewNewModule::GenerateRandomTargetHuman(float xCoord, float yCord)
+void Aftr::GLViewfinal_project::GenerateRandomTargetHuman(float xCoord, float yCord)
 {
 	cout << "Target at: " << xCoord << "  " << yCord << endl;
 	string targetPath(ManagerEnvironmentConfiguration::getLMM() + "models/MaleTarget.obj");
@@ -258,8 +272,7 @@ void Aftr::GLViewNewModule::GenerateRandomTargetHuman(float xCoord, float yCord)
 	worldLst->push_back(Target);
 }
 
-
-void  Aftr::GLViewNewModule::createNewModuleWayPoints()
+void  Aftr::GLViewfinal_project::createNewModuleWayPoints()
 {
    // Create a waypoint with a radius of 3, a frequency of 5 seconds, activated by GLView's camera, and is visible.
    WayPointParametersBase params(this);
@@ -271,34 +284,7 @@ void  Aftr::GLViewNewModule::createNewModuleWayPoints()
    worldLst->push_back( wayPt );
 }
 
-void Aftr::GLViewNewModule::createPirateShipModel()
-{
-    cout << "Loading Pirate Ship Model..." << endl;
-    string buildingPath(ManagerEnvironmentConfiguration::getSMM() + "models/pirateship.wrl");
-    //string buildingPath(ManagerEnvironmentConfiguration::getLMM() + "models/TikTAkTiers.obj");
-    //cout << "PATH: " << buildingPath << endl;
-    WO* BuildingModel = WO::New(buildingPath, Vector(.3, .3, .3));
-    BuildingModel->renderOrderType = RENDER_ORDER_TYPE::roOPAQUE;
-    BuildingModel->setPosition(Vector(300,300,50));
-    //hospitalModel->getModel()->getModelDataShared()->getModelMeshes().at(0)->getSkins().at(0).getMultiTextureSet().at(0)->setTextureRepeats( 5.0f );
-    BuildingModel->setLabel( "Pirate Ship" );
-    worldLst->push_back(BuildingModel);
-}
-
-void  Aftr::GLViewNewModule::createRaceCarModel()
-{
-    cout << "Loading Racecar Model..." << endl;
-    //Create formula one model 3d object
-    string raceCar(ManagerEnvironmentConfiguration::getLMM() + "models/Formula 1 mesh.obj");
-    //cout << "PATH: " << raceCar << endl;
-    WO* RaceCar = WO::New(raceCar, Vector(.15, .15, .15), MESH_SHADING_TYPE::mstSMOOTH);
-    RaceCar->renderOrderType = RENDER_ORDER_TYPE::roOPAQUE;
-    RaceCar->setPosition(Vector(-10, -10, 10));
-    RaceCar->setLabel("Race Car");
-    worldLst->push_back(RaceCar);
-}
-
-void  Aftr::GLViewNewModule::bulletFiredFromGun(WO* Shooter)
+void  Aftr::GLViewfinal_project::bulletFiredFromGun(WO* Shooter)
 {
 	//Object generation settings
 	cout << "Shot Fired" << endl;
@@ -331,17 +317,18 @@ void  Aftr::GLViewNewModule::bulletFiredFromGun(WO* Shooter)
 	bulletInFlight->moveRelative(bulletInFlight->getModel()->getLookDirection() * 2);
 	//bulletInFlight->getModel()->setDisplayMatrix(startingDisplayMatrix);
 	ExistingBulletIDs.push_back(bulletInFlight->getID());
+    wayPt->getActivators()->push_back(bulletInFlight);
 	worldLst->push_back(bulletInFlight);
 }
 
-void Aftr::GLViewNewModule::WeaponFiring(WO* Shooter)
+void Aftr::GLViewfinal_project::WeaponFiring(WO* Shooter)
 {
 	string shooterName = Shooter->getLabel();
 	cout << shooterName << "  Is shooting!" << endl;
 	bulletFiredFromGun(Shooter);
 }
 
-void  Aftr::GLViewNewModule::createPlayersAKModel()
+void  Aftr::GLViewfinal_project::createPlayersAKModel()
 {
 	//Object generation settings
 	cout << "Loading Player's AK-47 Model..." << endl;

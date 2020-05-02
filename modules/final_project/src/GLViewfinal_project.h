@@ -7,7 +7,7 @@ namespace Aftr
    class Camera;
 
 /**
-   \class GLViewNewModule
+   \class GLViewfinal_project
    \author Scott Nykl 
    \brief A child of an abstract GLView. This class is the top-most manager of the module.
 
@@ -18,11 +18,11 @@ namespace Aftr
     \{
 */
 
-class GLViewNewModule : public GLView
+class GLViewfinal_project : public GLView
 {
 public:
-   static GLViewNewModule* New( const std::vector< std::string >& outArgs );
-   virtual ~GLViewNewModule();
+   static GLViewfinal_project* New( const std::vector< std::string >& outArgs );
+   virtual ~GLViewfinal_project();
    virtual void updateWorld(); ///< Called once per frame
    virtual void loadMap(); ///< Called once at startup to build this module's scene
    virtual void onResizeWindow( GLsizei width, GLsizei height );
@@ -35,8 +35,6 @@ public:
 
    //Object creation methods
    virtual void createNewModuleWayPoints();
-   virtual void createPirateShipModel();
-   virtual void createRaceCarModel();
    virtual void createPlayersAKModel();
    virtual void bulletFiredFromGun(WO* Shooter);
    virtual void WeaponFiring(WO* Shooter);
@@ -44,8 +42,10 @@ public:
    virtual void MoveBullet(WO* Bullet);
    virtual void GenerateRandomTargetHuman(float xCoord, float yCord);
 
+   int total_hit;
+
 protected:
-   GLViewNewModule( const std::vector< std::string >& args );
+   GLViewfinal_project( const std::vector< std::string >& args );
    virtual void onCreate();   
    size_t PlayerWeaponWOIndex;
    
