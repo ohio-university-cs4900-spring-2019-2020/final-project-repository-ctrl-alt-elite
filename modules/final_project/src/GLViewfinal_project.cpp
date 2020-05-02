@@ -35,25 +35,20 @@
 #include <WOFTGLString.h>
 #include <MGLFTGLString.h>
 
-#include "box.h"
-#include "target.h"
-#include "gun.h"
-#include "bullet.h"
-
 //If we want to use way points, we need to include this.
 #include "final_projectWayPoints.h"
-
 using namespace Aftr;
+using namespace std;
+//using namespace irrklang;
 
-std::string overwatch(ManagerEnvironmentConfiguration::getLMM() + "/fonts/overwatch.ttf");
-//WOGUILabel* testText;
 WOFTGLString* testText;
 WOWayPointSpherical* wayPt;
+std::string overwatch(ManagerEnvironmentConfiguration::getLMM() + "/fonts/overwatch.ttf");
 
 GLViewfinal_project* GLViewfinal_project::New( const std::vector< std::string >& args )
 {
    GLViewfinal_project* glv = new GLViewfinal_project( args );
-   glv->init( Aftr::GRAVITY, Vector( 0, 0, -1.0f ), "aftr.conf", PHYSICS_ENGINE_TYPE::petODE );
+   glv->init( Aftr::GRAVITY, Vector( 0, 0, -1.0f ), "../aftr.conf", PHYSICS_ENGINE_TYPE::petODE );
    glv->onCreate();
    return glv;
 }
@@ -74,8 +69,6 @@ GLViewfinal_project::GLViewfinal_project( const std::vector< std::string >& args
    //    calls GLView::onCreate()
 
    //GLViewfinal_project::onCreate() is invoked after this module's LoadMap() is completed.
-
-    //WOGUILabel* testText = WOGUILabel::New(nullptr);
 }
 
 
@@ -93,74 +86,64 @@ void GLViewfinal_project::onCreate()
    }
    this->setActorChaseType( STANDARDEZNAV ); //Default is STANDARDEZNAV mode
    //this->setNumPhysicsStepsPerRender( 0 ); //pause physics engine on start up; will remain paused till set to 1
-   //testText = WOGUILabel::New(nullptr);
+
    total_hit = 0;
 
-   testText = WOFTGLString::New(overwatch, 90);
+   testText = WOFTGLString::New(overwatch, 100);
    testText->setText("Total targets hit: " + std::to_string(wayPt->isTriggered()));
    testText->getModelT<MGLFTGLString>()->setFontColor(aftrColor4f(1.0f, 0.0f, 0.0f, 1.0f));
    testText->getModelT<MGLFTGLString>()->setSize(30, 10);
-   testText->setPosition(Vector(50, 50, 25));
+   testText->setPosition(Vector(100, 100, 25));
    testText->rotateAboutGlobalX(45);
    testText->rotateAboutGlobalY(-45);
-   //testText->setPosition(FONT_ORIENTATION::foLEFT_TOP);
-   //testText->getModelT<MGLFTGLString>()->setF
-   testText->rotateAboutGlobalX(Aftr::PI / 2);
+   testText->rotateAboutRelX(45);
+   testText->rotateAboutRelY(-45);
    worldLst->push_back(testText);
-
-   //this->gun = Gun::New();
-   //worldLst->push_back(this->gun->get_world_object());
-   //this->gun->set_position(cam->getPosition());
-   //std::cout << "Look direction" << cam->getLookDirection() << std::endl;
 }
-
 
 GLViewfinal_project::~GLViewfinal_project()
 {
    //Implicitly calls GLView::~GLView()
 }
 
-
 void GLViewfinal_project::updateWorld()
 {
    GLView::updateWorld(); //Just call the parent's update world first.
                           //If you want to add additional functionality, do it after
                           //this call.
-   //this->gun->set_position(cam->getPosition());
-   //std::cout << "Look direction" << cam->getLookDirection() << std::endl;
-   ////Vector temp = cam->getLookDirection();
-   //std::cout << "Cam position" << cam->getPosition() << std::endl;
-   //this->gun->set_direction(cam->getLookDirection());
-   //std::cout << "Gun position: " << this->gun->get_postion() << std::endl;
+   //sManager->updateListenerPosition(*this->cam->getPosition, *this->cam->getLookDirection, *this->cam->getCameraVelocity, *this->cam->getNormalDirection);
+   for (int x = 0; x < ExistingBulletIDs.size(); x++)
+   {
+	   WO* currentBullet = this->worldLst->getWOByID(ExistingBulletIDs[x]);
+	   MoveBullet(currentBullet);
+   }
 
-   testText->setText("Total targets hit: " + std::to_string(wayPt->isTriggered()));
+   // Here is where we would put the update on target hit stuff!
+
+   testText->setText("Total targets hit: " + std::to_string(wayPt->isTriggered() + total_hit));
    worldLst->push_back(testText);
 }
-
 
 void GLViewfinal_project::onResizeWindow( GLsizei width, GLsizei height )
 {
    GLView::onResizeWindow( width, height ); //call parent's resize method.
 }
 
-
 void GLViewfinal_project::onMouseDown( const SDL_MouseButtonEvent& e )
 {
    GLView::onMouseDown( e );
+   
 }
-
 
 void GLViewfinal_project::onMouseUp( const SDL_MouseButtonEvent& e )
 {
    GLView::onMouseUp( e );
 }
 
-
 void GLViewfinal_project::onMouseMove( const SDL_MouseMotionEvent& e )
 {
    GLView::onMouseMove( e );
 }
-
 
 void GLViewfinal_project::onKeyDown( const SDL_KeyboardEvent& key )
 {
@@ -168,44 +151,28 @@ void GLViewfinal_project::onKeyDown( const SDL_KeyboardEvent& key )
    if( key.keysym.sym == SDLK_0 )
       this->setNumPhysicsStepsPerRender( 1 );
 
-   if( key.keysym.sym == SDLK_RETURN )
+   if( key.keysym.sym == SDLK_1 )
    {
-       this->bullet = Bullet::New();
-       worldLst->push_back(this->bullet->get_world_object());
-       this->bullet->set_position(cam->getPosition());
-       std::cout << "Bullet fired" << std::endl;
-       //fire_bullet();
-   }
-
-   if (key.keysym.sym == SDLK_1)
-   {
-       //this->cam->moveInLookDirection(2);
        total_hit++;
-       testText->setText("Total targets hit: " + std::to_string(wayPt->isTriggered()));
-       worldLst->push_back(testText);
-       //updateWorld();
-       //total_hit++;
    }
-   //if (key.keysym.sym == SDLK_s)
-   //{
-   //    //this->cam->moveOppositeLookDirection(2);
-   //}
-   //if (key.keysym.sym == SDLK_a)
-   //{
-   //    //this->cam->moveLeft();
-   //}
-   //if (key.keysym.sym == SDLK_d)
-   //{
-   //    //this->cam->moveRight();
-   //}
-}
 
+   if (key.keysym.sym == SDLK_a)
+   {
+	   cout << "Toggling ADS..." << endl;
+	   WO* playerWeapon = this->worldLst->getWOByID(this->PlayerWeaponWOIndex);
+
+   }
+
+   if (key.keysym.sym == SDLK_f)
+   {
+	   WeaponFiring(this->worldLst->getWOByID(this->PlayerWeaponWOIndex));
+   }
+}
 
 void GLViewfinal_project::onKeyUp( const SDL_KeyboardEvent& key )
 {
    GLView::onKeyUp( key );
 }
-
 
 void Aftr::GLViewfinal_project::loadMap()
 {
@@ -213,31 +180,32 @@ void Aftr::GLViewfinal_project::loadMap()
    this->actorLst = new WorldList();
    this->netLst = new WorldList();
 
+
    ManagerOpenGLState::GL_CLIPPING_PLANE = 1000.0;
    ManagerOpenGLState::GL_NEAR_PLANE = 0.1f;
    ManagerOpenGLState::enableFrustumCulling = false;
-   Axes::isVisible = true;
-   this->glRenderer->isUsingShadowMapping( false ); //set to TRUE to enable shadow mapping, must be using GL 3.2+
+   Axes::isVisible = false;
+   this->glRenderer->isUsingShadowMapping( true ); //set to TRUE to enable shadow mapping, must be using GL 3.2+
 
    this->cam->setPosition( 15,15,10 );
+   
+   //Creates the sound manager for the module:
 
    std::string shinyRedPlasticCube( ManagerEnvironmentConfiguration::getSMM() + "/models/cube4x4x4redShinyPlastic_pp.wrl" );
    std::string wheeledCar( ManagerEnvironmentConfiguration::getSMM() + "/models/rcx_treads.wrl" );
    std::string grass( ManagerEnvironmentConfiguration::getSMM() + "/models/grassFloor400x400_pp.wrl" );
    std::string human( ManagerEnvironmentConfiguration::getSMM() + "/models/human_chest.wrl" );
-   //std::string box(ManagerEnvironmentConfiguration::getLMM() + "/models/WOOD_PLANTER_BOXES_10K.dae");
-   //std::string target1(ManagerEnvironmentConfiguration::getLMM() + "/models/shtfrtr.dae");
-   //std::string overwatch(ManagerEnvironmentConfiguration::getLMM() + "/fonts/overwatch.ttf");
-
+   
    //SkyBox Textures readily available
    std::vector< std::string > skyBoxImageNames; //vector to store texture paths
-   skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/sky_mountains+6.jpg" );
 
-   float ga = 0.1f; //Global Ambient Light level for this module
+   skyBoxImageNames.push_back( ManagerEnvironmentConfiguration::getSMM() + "/images/skyboxes/space_Hubble_Nebula+6.jpg" );
+
+   float ga = 0.02f; //Global Ambient Light level for this module
    ManagerLight::setGlobalAmbientLight( aftrColor4f( ga, ga, ga, 1.0f ) );
    WOLight* light = WOLight::New();
    light->isDirectionalLight( true );
-   light->setPosition( Vector( 0, 0, 100 ) );
+   light->setPosition(Vector(0, 0, 100));
    //Set the light's display matrix such that it casts light in a direction parallel to the -z axis (ie, downwards as though it was "high noon")
    //for shadow mapping to work, this->glRenderer->isUsingShadowMapping( true ), must be invoked.
    light->getModel()->setDisplayMatrix( Mat4::rotateIdentityMat( { 0, 1, 0 }, 90.0f * Aftr::DEGtoRAD ) );
@@ -252,87 +220,134 @@ void Aftr::GLViewfinal_project::loadMap()
    worldLst->push_back( wo );
 
    ////Create the infinite grass plane (the floor)
-   wo = WO::New( grass, Vector( 1, 1, 1 ), MESH_SHADING_TYPE::mstFLAT );
+   wo = WO::New( grass, Vector( 100, 100, 1 ), MESH_SHADING_TYPE::mstFLAT );
    wo->setPosition( Vector( 0, 0, 0 ) );
    wo->renderOrderType = RENDER_ORDER_TYPE::roOPAQUE;
    ModelMeshSkin& grassSkin = wo->getModel()->getModelDataShared()->getModelMeshes().at( 0 )->getSkins().at( 0 );
-   grassSkin.getMultiTextureSet().at( 0 )->setTextureRepeats( 5.0f );
+   grassSkin.getMultiTextureSet().at( 0 )->setTextureRepeats( 500.0f );
    grassSkin.setAmbient( aftrColor4f( 0.4f, 0.4f, 0.4f, 1.0f ) ); //Color of object when it is not in any light
    grassSkin.setDiffuse( aftrColor4f( 1.0f, 1.0f, 1.0f, 1.0f ) ); //Diffuse color components (ie, matte shading color of this object)
    grassSkin.setSpecular( aftrColor4f( 0.4f, 0.4f, 0.4f, 1.0f ) ); //Specular color component (ie, how "shiney" it is)
    grassSkin.setSpecularCoefficient( 10 ); // How "sharp" are the specular highlights (bigger is sharper, 1000 is very sharp, 10 is very dull)
    wo->setLabel( "Grass" );
    worldLst->push_back( wo );
-   
-   this->box1 = Box::New();
-   worldLst->push_back(this->box1->get_world_object());
-   this->box1->set_position(Vector(47, 40, 0));
 
-   this->box2 = Box::New();
-   worldLst->push_back(this->box2->get_world_object());
-   this->box2->set_position(Vector(43, 43, 0));
+   createPlayersAKModel();
+   int BattleGroundDimension = 1000.0;
+   int targetCount = 30;
+   for (int x = 0; x < targetCount; x++)
+   {
+	   float newX = rand() % BattleGroundDimension;
+	   float newY = rand() % BattleGroundDimension;
+	   GenerateRandomTargetHuman(newX, newY);
 
-   this->box3 = Box::New();
-   worldLst->push_back(this->box3->get_world_object());
-   this->box3->set_position(Vector(38, 45, 0));
-
-   this->box4 = Box::New();
-   worldLst->push_back(this->box4->get_world_object());
-   this->box4->set_position(Vector(33, 50, 0));
-
-   
-   //Need to fix target scaling
-   this->target1 = Target::New();
-   worldLst->push_back(this->target1->get_world_object());
-   this->target1->set_position(Vector(35, 55, 0));
-
-   this->target2 = Target::New();
-   worldLst->push_back(this->target2->get_world_object());
-   this->target2->set_position(Vector(43, 50, 0));
-
-   this->target3 = Target::New();
-   worldLst->push_back(this->target3->get_world_object());
-   this->target3->set_position(Vector(45, 45, 0));
-
-   this->target4 = Target::New();
-   worldLst->push_back(this->target4->get_world_object());
-   this->target4->set_position(Vector(50, 40, 0));
-
-   //this->gun = Gun::New();
-   //worldLst->push_back(this->gun->get_world_object());
-   //this->gun->set_position(cam->getPosition());
-
-   // Create a waypoint with a radius of 3, a frequency of 5 seconds, activated by GLView's camera, and is visible.
-   WayPointParametersBase params(this);
-   params.frequency = 1000;
-   params.useCamera = true;
-   params.visible = true;
-   //WOWayPointSpherical* wayPt = WOWP1::New(params, 3);
-   wayPt = WOWP1::New(params, 3);
-   wayPt->setPosition(Vector(35, 55, 3));
-   worldLst->push_back(wayPt);
-   //wayPt->isTriggered();
-
-   //createfinal_projectWayPoints();
+       std::cout << "Creating target waypoint" << std::endl;
+       WayPointParametersBase params(this);
+       params.frequency = 1000;
+       params.useCamera = true;
+       params.visible = true;
+       //WOWayPointSpherical* wayPt = WOWP1::New(params, 3);
+       wayPt = WOWP1::New(params, 3);
+       wayPt->setPosition(Vector(newX, newY, 10));
+       worldLst->push_back(wayPt);
+   }
 }
 
+void Aftr::GLViewfinal_project::MoveBullet(WO* Bullet)
+{
+	Bullet->moveRelative(Bullet->getModel()->getLookDirection() * 3.5);
+}
 
-void GLViewfinal_project::createfinal_projectWayPoints()
+void Aftr::GLViewfinal_project::GenerateRandomTargetHuman(float xCoord, float yCord)
+{
+	cout << "Target at: " << xCoord << "  " << yCord << endl;
+	string targetPath(ManagerEnvironmentConfiguration::getLMM() + "models/MaleTarget.obj");
+	//string buildingPath(ManagerEnvironmentConfiguration::getLMM() + "models/TikTAkTiers.obj");
+	//cout << "PATH: " << buildingPath << endl;
+	WO* Target = WO::New(targetPath, Vector(.15, .15, .15));
+	Target->renderOrderType = RENDER_ORDER_TYPE::roOPAQUE;
+	Target->setPosition(Vector(xCoord, yCord, 8));
+	Target->setLabel("Enemy");
+	//Target->getModel()->set(Vector(0, 0, 0));
+	worldLst->push_back(Target);
+}
+
+void  Aftr::GLViewfinal_project::createNewModuleWayPoints()
 {
    // Create a waypoint with a radius of 3, a frequency of 5 seconds, activated by GLView's camera, and is visible.
    WayPointParametersBase params(this);
-   params.frequency = 100;
+   params.frequency = 5000;
    params.useCamera = true;
    params.visible = true;
    WOWayPointSpherical* wayPt = WOWP1::New( params, 3 );
-   wayPt->setPosition( Vector( 35, 55, 3 ) );
+   wayPt->setPosition( Vector( 50, 0, 3 ) );
    worldLst->push_back( wayPt );
 }
 
-void GLViewfinal_project::fire_bullet()
+void  Aftr::GLViewfinal_project::bulletFiredFromGun(WO* Shooter)
 {
-    this->bullet = Bullet::New();
-    worldLst->push_back(this->bullet->get_world_object());
-    this->bullet->set_position(cam->getLookDirection());
-    std::cout << "Bullet fired" << std::endl;
+	//Object generation settings
+	cout << "Shot Fired" << endl;
+	//Create AK-47  model 3d object
+	string bullet(ManagerEnvironmentConfiguration::getLMM() + "models/bullet_projectile.obj");
+	WO* bulletInFlight = WO::New(bullet, Vector(.005, .005, .005), MESH_SHADING_TYPE::mstFLAT);
+	bulletInFlight->renderOrderType = RENDER_ORDER_TYPE::roLIGHT;
+	//bulletInFlight.setAmbient(aftrColor4f(0.4f, 0.4f, 0.4f, 1.0f)); //Color of object when it is not in any light
+	//bulletInFlight.setDiffuse(aftrColor4f(1.0f, 1.0f, 1.0f, 1.0f)); //Diffuse color components (ie, matte shading color of this object)
+	//bulletInFlight.setSpecular(aftrColor4f(4.0f, 4.0f, 4.0f, 4.0f)); //Specular color component (ie, how "shiney" it is)
+	Vector startingLocation = Shooter->getPosition();
+
+	//Bullets glow and flash:
+	float ba = 0.3f; //Global Ambient Light level for this module
+	WOLight* light = WOLight::New();
+	light->setColor(aftrColor4f(255.0f, 255.0f, 8.0f, 1.0f));
+	light->isPointLight(true);
+	light->isDirectionalLight(false);
+	light->setPosition(startingLocation);
+	light->setParentWorldObject(bulletInFlight);
+	light->lockWRTparent();
+	//Vector startingDisplayMatrix = Shooter->getDisplayMatrix();
+	// bullet gun offset:
+	//startingLocation[0] = startingLocation[0] + 1.3;
+	//startingLocation[0] = startingLocation[0] + 4;
+	bulletInFlight->setParentWorldObject(Shooter);
+	bulletInFlight->setPosition(startingLocation);
+	
+	bulletInFlight->getModel()->setLookDirection(Shooter->getModel()->getLookDirection());
+	bulletInFlight->moveRelative(bulletInFlight->getModel()->getLookDirection() * 2);
+	//bulletInFlight->getModel()->setDisplayMatrix(startingDisplayMatrix);
+	ExistingBulletIDs.push_back(bulletInFlight->getID());
+    wayPt->getActivators()->push_back(bulletInFlight);
+	worldLst->push_back(bulletInFlight);
+}
+
+void Aftr::GLViewfinal_project::WeaponFiring(WO* Shooter)
+{
+	string shooterName = Shooter->getLabel();
+	cout << shooterName << "  Is shooting!" << endl;
+	bulletFiredFromGun(Shooter);
+}
+
+void  Aftr::GLViewfinal_project::createPlayersAKModel()
+{
+	//Object generation settings
+	cout << "Loading Player's AK-47 Model..." << endl;
+	//Create AK-47  model 3d object
+	string weapon(ManagerEnvironmentConfiguration::getLMM() + "models/Ak-47_V2.obj");
+	WO* AK47 = WO::New(weapon, Vector(.01, .01, .01), MESH_SHADING_TYPE::mstFLAT);
+	AK47->renderOrderType = RENDER_ORDER_TYPE::roOPAQUE;
+	// Weapon camera offset:
+	Vector startingLocation = this->cam->getPosition();
+	startingLocation[0] = startingLocation[0] + 1.3;
+	startingLocation[1] = startingLocation[1] - 1;
+	startingLocation[2] = startingLocation[2] - 1;
+	// Weapon model orientation
+	AK47->setPosition(startingLocation);
+	// Weapon methods:
+	// Connects the weapon to the camera:
+	AK47->setParentWorldObject(this->cam);
+	AK47->lockWRTparent();
+	AK47->setLabel("AK-47");
+	worldLst->push_back(AK47);
+	this->PlayerWeaponWOIndex = AK47->getID();
 }

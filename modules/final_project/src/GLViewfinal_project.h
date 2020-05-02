@@ -1,13 +1,6 @@
 #pragma once
 
 #include "GLView.h"
-#include "box.h"
-#include "target.h"
-#include "gun.h"
-#include "bullet.h"
-#include <WOGUILabel.h>
-#include <WOFTGLString.h>
-#include <MGLFTGLString.h>
 
 namespace Aftr
 {
@@ -32,34 +25,32 @@ public:
    virtual ~GLViewfinal_project();
    virtual void updateWorld(); ///< Called once per frame
    virtual void loadMap(); ///< Called once at startup to build this module's scene
-   virtual void createfinal_projectWayPoints();
    virtual void onResizeWindow( GLsizei width, GLsizei height );
    virtual void onMouseDown( const SDL_MouseButtonEvent& e );
    virtual void onMouseUp( const SDL_MouseButtonEvent& e );
    virtual void onMouseMove( const SDL_MouseMotionEvent& e );
    virtual void onKeyDown( const SDL_KeyboardEvent& key );
    virtual void onKeyUp( const SDL_KeyboardEvent& key );
-   virtual void fire_bullet();
 
-   Box* box1;
-   Box* box2;
-   Box* box3;
-   Box* box4;
-   Target* target1;
-   Target* target2;
-   Target* target3;
-   Target* target4;
-   Gun* gun;
-   Bullet* bullet;
 
-   //WOWayPointSpherical* wayPt;
-   //WOGUILabel* testText;
+   //Object creation methods
+   virtual void createNewModuleWayPoints();
+   virtual void createPlayersAKModel();
+   virtual void bulletFiredFromGun(WO* Shooter);
+   virtual void WeaponFiring(WO* Shooter);
+   std::vector<size_t> ExistingBulletIDs;
+   virtual void MoveBullet(WO* Bullet);
+   virtual void GenerateRandomTargetHuman(float xCoord, float yCord);
+
    int total_hit;
-   //WOGUILabel* testText = WOGUILabel::New(nullptr);
 
 protected:
    GLViewfinal_project( const std::vector< std::string >& args );
    virtual void onCreate();   
+   size_t PlayerWeaponWOIndex;
+   
+
+   //Creates the sound manager for the module:
 };
 
 /** \} */
